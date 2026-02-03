@@ -26,67 +26,49 @@ Developed by: MANIKANDAN T
 RegisterNumber: 212224110037
 */
 
+Program to perform Breadth-First Search (BFS) traversal on a city’s junction map represented as a graph
+
 import java.util.*;
 
-public class BFS_CityJunction {
+public class EmergencyRouteBFS {
+    public static void addEdge(List<List<Integer>> g, int u, int v) {
+        g.get(u).add(v);
+        g.get(v).add(u);
+    }
 
-    static void bfsTraversal(List<List<Integer>> graph, int start, int n) {
-        boolean[] visited = new boolean[n];
-        Queue<Integer> queue = new LinkedList<>();
-
-        visited[start] = true;
-        queue.add(start);
-
-        System.out.print("BFS Traversal: ");
-
-        while (!queue.isEmpty()) {
-            int node = queue.poll();
-            System.out.print(node + " ");
-
-            for (int neighbor : graph.get(node)) {
+    public static void bfs(List<List<Integer>> g, int src, boolean[] visited) {
+        Queue<Integer> q = new LinkedList<>();
+        q.offer(src);
+        visited[src] = true;
+        while (!q.isEmpty()) {
+            int curr = q.poll();
+            System.out.print(curr + " ");
+            for (int neighbor : g.get(curr)) {
                 if (!visited[neighbor]) {
                     visited[neighbor] = true;
-                    queue.add(neighbor);
+                    q.offer(neighbor);
                 }
             }
         }
-        System.out.println();
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter number of junctions: ");
-        int n = sc.nextInt();
-
-        List<List<Integer>> graph = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            graph.add(new ArrayList<>());
-        }
-
-        System.out.print("Enter number of roads (edges): ");
-        int e = sc.nextInt();
-
-        System.out.println("Enter each road (junction1 junction2):");
-        for (int i = 0; i < e; i++) {
-            int u = sc.nextInt();
-            int v = sc.nextInt();
-            graph.get(u).add(v);
-            graph.get(v).add(u);  // For undirected city map
-        }
-
-        System.out.print("Enter source junction: ");
-        int start = sc.nextInt();
-
-        bfsTraversal(graph, start, n);
-
-        sc.close();
+        int n = sc.nextInt(), e = sc.nextInt();
+        List<List<Integer>> g = new ArrayList<>();
+        for (int i = 0; i < n; i++) g.add(new ArrayList<>());
+        for (int i = 0; i < e; i++) addEdge(g, sc.nextInt(), sc.nextInt());
+        int src = sc.nextInt();
+        bfs(g, src, new boolean[n]);
     }
 }
+
 ```
 
 ## Output:
-<img width="380" height="409" alt="image" src="https://github.com/user-attachments/assets/052e429b-8647-451f-a222-f5ab3a1a89bd" />
+
+<img width="536" height="389" alt="image" src="https://github.com/user-attachments/assets/918bd43b-4e4d-4e83-b9da-310784fe941d" />
+
 
 
 
