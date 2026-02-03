@@ -27,81 +27,70 @@ To design and implement a java program that constructs a binary tree from given 
    
 ## Program:
 ```java
-/*
+
 Program to constructs a binary tree from given level order input and counts the number of nodes 
-Developed by: MANIKANDAN T
-RegisterNumber: 212224110037
-*/
+
 import java.util.*;
 
 class Node {
     int data;
     Node left, right;
-
-    Node(int value) {
-        data = value;
-        left = right = null;
+    Node(int data) {
+        this.data = data;
+        this.left = this.right = null;
     }
 }
 
-public class LeftSubtreeCount {
+public class Main {
 
-    public static Node buildTreeLevelOrder(int[] arr) {
+    // Build binary tree in level-order fashion
+    static Node buildTree(int[] arr) {
         if (arr.length == 0) return null;
-
         Node root = new Node(arr[0]);
-        Queue<Node> queue = new LinkedList<>();
-        queue.add(root);
-
+        Queue<Node> q = new LinkedList<>();
+        q.add(root);
         int i = 1;
-        while (!queue.isEmpty() && i < arr.length) {
-            Node current = queue.poll();
 
-            // Insert left child
+        while (!q.isEmpty() && i < arr.length) {
+            Node current = q.poll();
             if (i < arr.length) {
                 current.left = new Node(arr[i++]);
-                queue.add(current.left);
+                q.add(current.left);
             }
-
-            // Insert right child
             if (i < arr.length) {
                 current.right = new Node(arr[i++]);
-                queue.add(current.right);
+                q.add(current.right);
             }
         }
+
         return root;
     }
 
-    // Count nodes recursively
-    public static int countNodes(Node root) {
+    static int countNodes(Node root) {
         if (root == null) return 0;
         return 1 + countNodes(root.left) + countNodes(root.right);
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter number of nodes: ");
         int n = sc.nextInt();
-
         int[] arr = new int[n];
-        System.out.println("Enter level order elements:");
-        for (int i = 0; i < n; i++) {
-            arr[i] = sc.nextInt();
+        for (int i = 0; i < n; i++) arr[i] = sc.nextInt();
+        Node root = buildTree(arr);
+
+        if (root.left == null) {
+            System.out.println(0);
+        } else {
+            System.out.println(countNodes(root.left));
         }
-
-        Node root = buildTreeLevelOrder(arr);
-
-        int countLeft = countNodes(root.left);
-
-        System.out.println("Number of nodes in the left subtree: " + countLeft);
-        sc.close();
     }
 }
+
 ```
 
 ## Output:
-<img width="381" height="365" alt="image" src="https://github.com/user-attachments/assets/763990a7-1e36-489b-a003-4a9be74c0d4c" />
+<img width="496" height="367" alt="image" src="https://github.com/user-attachments/assets/02ffb2c5-1a55-4cdc-866f-9a664dac2cdf" />
+
 
 
 
