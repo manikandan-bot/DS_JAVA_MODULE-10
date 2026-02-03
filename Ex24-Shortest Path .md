@@ -39,83 +39,79 @@ Program to determine Shortest Path and Reachability in a Heritage Town using BFS
 Developed by:MANIKANDAN T
 RegisterNumber: 212224110037
 */
+
 import java.util.*;
 
-public class HeritageTownBFS {
-
-    public static void bfs(int start, List<List<Integer>> graph, int n, int destination) {
+public class TouristNavigation {
+    
+    public static int bfs(List<List<Integer>> graph, int start, int target, int n) {
         boolean[] visited = new boolean[n];
-        int[] distance = new int[n];
-        Arrays.fill(distance, -1);
-
-        Queue<Integer> queue = new LinkedList<>();
+        int[] dist = new int[n];
+        Queue<Integer> q = new LinkedList<>();
+        q.offer(start);
         visited[start] = true;
-        distance[start] = 0;
-        queue.add(start);
+        dist[start] = 0;
 
-        int reachableCount = 0;
-
-        System.out.print("Reachable Attractions: ");
-
-        while (!queue.isEmpty()) {
-            int node = queue.poll();
-            System.out.print(node + " ");
-            reachableCount++;
-
-            for (int next : graph.get(node)) {
-                if (!visited[next]) {
-                    visited[next] = true;
-                    distance[next] = distance[node] + 1;
-                    queue.add(next);
+        while (!q.isEmpty()) {
+            int curr = q.poll();
+            if (curr == target) return dist[curr];
+            for (int neigh : graph.get(curr)) {
+                if (!visited[neigh]) {
+                    visited[neigh] = true;
+                    dist[neigh] = dist[curr] + 1;
+                    q.offer(neigh);
                 }
             }
         }
+        return -1;
+    }
 
-        System.out.println("\nTotal reachable attractions: " + reachableCount);
+    public static void dfs(List<List<Integer>> graph, boolean[] visited, int node) {
+        visited[node] = true;
+        for (int neighbor : graph.get(node)) {
+            if (!visited[neighbor]) {
+                dfs(graph, visited, neighbor);
+            }
+        }
+    }
 
-        if (distance[destination] != -1)
-            System.out.println("Shortest path (minimum hops) to attraction " + destination + ": " + distance[destination]);
-        else
-            System.out.println("Destination attraction is not reachable.");
+    public static int countReachable(boolean[] visited) {
+        int count = 0;
+        for (boolean v : visited) if (v) count++;
+        return count;
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter number of attractions: ");
-        int n = sc.nextInt();
+        int n = sc.nextInt(), e = sc.nextInt();
         List<List<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i < n; i++) graph.add(new ArrayList<>());
 
-        for (int i = 0; i < n; i++) {
-            graph.add(new ArrayList<>());
-        }
-
-        System.out.print("Enter number of walking paths: ");
-        int e = sc.nextInt();
-
-        System.out.println("Enter paths (attraction1 attraction2):");
         for (int i = 0; i < e; i++) {
-            int u = sc.nextInt();
-            int v = sc.nextInt();
+            int u = sc.nextInt(), v = sc.nextInt();
             graph.get(u).add(v);
-            graph.get(v).add(u); // undirected
+            graph.get(v).add(u);
         }
 
-        System.out.print("Enter starting attraction: ");
         int start = sc.nextInt();
+        int target = sc.nextInt();
 
-        System.out.print("Enter destination attraction: ");
-        int destination = sc.nextInt();
+        int shortest = bfs(graph, start, target, n);
+        boolean[] visited = new boolean[n];
+        dfs(graph, visited, start);
+        int reachable = countReachable(visited);
 
-        bfs(start, graph, n, destination);
-        sc.close();
+        System.out.println("Shortest path from start to target: " + shortest);
+        System.out.println("Total reachable attractions from start: " + reachable);
     }
 }
+
 ```
 
 ## Output:
 
-<img width="538" height="500" alt="image" src="https://github.com/user-attachments/assets/5c316122-d16b-4743-b5b3-341f81b28788" />
+<img width="1228" height="375" alt="image" src="https://github.com/user-attachments/assets/7d2ce99f-290c-4d83-a116-22e6bbedb30f" />
+
 
 
 ## Result:
