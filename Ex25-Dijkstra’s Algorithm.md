@@ -19,90 +19,73 @@ Program to find the Fastest Route to a Charging Station using Dijkstra’s Algor
 Developed by: MANIKANDAN T
 RegisterNumber: 212224110037
 */
+
 import java.util.*;
 
-class DijkstraEV {
-    private static final int INF = Integer.MAX_VALUE;
+public class EVChargingNavigation {
 
-    public static int dijkstra(int[][] graph, int src, boolean[] charger) {
-        int V = graph.length;
-        int[] dist = new int[V];
-        boolean[] visited = new boolean[V];
+    static class Pair {
+        int node, time;
+        Pair(int node, int time) {
+            this.node = node;
+            this.time = time;
+        }
+    }
 
-        Arrays.fill(dist, INF);
-        dist[src] = 0;
+    static int findNearestChargingStation(int n, List<List<Pair>> graph, int source, Set<Integer> stations) {
+        int[] dist = new int[n];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[source] = 0;
 
-        for (int i = 0; i < V - 1; i++) {
-            int u = getMinDistanceNode(dist, visited);
-            visited[u] = true;
+        PriorityQueue<Pair> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a.time));
+        pq.offer(new Pair(source, 0));
 
-            for (int v = 0; v < V; v++) {
-                if (!visited[v] && graph[u][v] != 0 && dist[u] != INF &&
-                    dist[u] + graph[u][v] < dist[v]) {
-                    dist[v] = dist[u] + graph[u][v];
+        while (!pq.isEmpty()) {
+            Pair current = pq.poll();
+            for (Pair neighbor : graph.get(current.node)) {
+                int newDist = dist[current.node] + neighbor.time;
+                if (newDist < dist[neighbor.node]) {
+                    dist[neighbor.node] = newDist;
+                    pq.offer(new Pair(neighbor.node, newDist));
                 }
             }
         }
 
-        int minTime = INF;
-        for (int i = 0; i < V; i++) {
-            if (charger[i] && dist[i] < minTime) {
-                minTime = dist[i];
-            }
+        int minTime = Integer.MAX_VALUE;
+        for (int s : stations) {
+            if (dist[s] < minTime) minTime = dist[s];
         }
-        return minTime;
-    }
-
-    private static int getMinDistanceNode(int[] dist, boolean[] visited) {
-        int min = INF, minIndex = -1;
-        for (int v = 0; v < dist.length; v++) {
-            if (!visited[v] && dist[v] < min) {
-                min = dist[v];
-                minIndex = v;
-            }
-        }
-        return minIndex;
+        return minTime == Integer.MAX_VALUE ? -1 : minTime;
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Enter number of blocks: ");
-        int V = sc.nextInt();
+        int n = sc.nextInt(), m = sc.nextInt();
+        List<List<Pair>> graph = new ArrayList<>();
+        for (int i = 0; i < n; i++) graph.add(new ArrayList<>());
 
-        int[][] graph = new int[V][V];
-        System.out.println("Enter travel time matrix (0 if no direct connection): ");
-        for (int i = 0; i < V; i++) {
-            for (int j = 0; j < V; j++) {
-                graph[i][j] = sc.nextInt();
-            }
+        for (int i = 0; i < m; i++) {
+            int u = sc.nextInt(), v = sc.nextInt(), w = sc.nextInt();
+            graph.get(u).add(new Pair(v, w));
+            graph.get(v).add(new Pair(u, w)); // Undirected
         }
 
-        System.out.print("Enter current EV position (0 to " + (V - 1) + "): ");
-        int src = sc.nextInt();
+        int source = sc.nextInt();
+        int k = sc.nextInt();
+        Set<Integer> stations = new HashSet<>();
+        for (int i = 0; i < k; i++) stations.add(sc.nextInt());
 
-        boolean[] charger = new boolean[V];
-        System.out.print("Enter number of charging stations: ");
-        int n = sc.nextInt();
-        System.out.println("Enter charging station positions:");
-        for (int i = 0; i < n; i++) {
-            charger[sc.nextInt()] = true;
-        }
-
-        int minTime = dijkstra(graph, src, charger);
-
-        if (minTime == INF) {
-            System.out.println("No reachable charging station!");
-        } else {
-            System.out.println("Shortest travel time to nearest charging station: " + minTime + " minutes");
-        }
+        System.out.println(findNearestChargingStation(n, graph, source, stations));
     }
 }
+
 ```
 
 ## Output:
 
-<img width="648" height="443" alt="image" src="https://github.com/user-attachments/assets/1b009bad-d4fe-40aa-85a0-5afa4ecc7836" />
+<img width="467" height="507" alt="image" src="https://github.com/user-attachments/assets/e7d72aaa-5915-4374-88c0-96b54809f041" />
+
 
 
 ## Result:
